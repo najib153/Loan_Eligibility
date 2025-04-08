@@ -7,7 +7,7 @@ from data_processing import load_data, preprocess_data, show_data
 from modeling import split_data, train_and_evaluate_models
 
 if __name__ == "__main__":
-    df = load_data('credit.csv')
+    df = load_data('data_file')
     show_data(df)
     df = preprocess_data(df)
     xtrain, xtest, ytrain, ytest = split_data(df)
