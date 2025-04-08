@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Loan_Eligibility"
+version = "0.1.0"
+description = "A Python project with data science dependencies"
+authors = [{name = "mustapha najib", email = "munajib172@gmail.com"}]
+license = {text = "MIT"}
+requires-python = ">=3.9"
+
+dependencies = [
+    "pandas",
+    "scikit-learn",
+    "numpy",
+    "matplotlib",
+    "seaborn"
+]
