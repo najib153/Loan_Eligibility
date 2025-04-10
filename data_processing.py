@@ -3,8 +3,8 @@ import os
 
 def load_data(filepath):
     """Load dataset from a CSV file."""
-    file = os.path.join("data", filepath)  # Correct path handling
-    return pd.read_csv(file)
+    #file = os.path.join("data", filepath)  # Correct path handling
+    return pd.read_csv(filepath)
 
 def show_data(data, n_rows=5):
     
