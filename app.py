@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
-from data_processing import load_data, preprocess_data
-from modeling import split_data, train_and_evaluate_models
+import joblib
+from data_processing import load_data, preprocess_data, load_trained_model
+from modeling import split_data, train_and_evaluate_models, make_prediction, get_user_input
+
 
 # Set page config
 st.set_page_config(page_title="Loan Eligibility Predictor", layout="wide")
@@ -21,7 +23,7 @@ options = st.sidebar.radio("Select Option:", ["Home", "Data Overview", "Model Tr
 @st.cache_data
 def load_and_preprocess():
     try:
-        df = load_data("data\credit.csv")
+        df = load_data("credit.csv")
         df = preprocess_data(df)
         return df
     except Exception as e:
@@ -58,25 +60,63 @@ elif options == "Model Training":
     if st.button("Train Models"):
         if df is not None:
             with st.spinner("Training models..."):
-                xtrain, xtest, ytrain, ytest = split_data(df)
-                results = train_and_evaluate_models(xtrain, xtest, ytrain, ytest)
-                
-                st.success("Model training completed!")
-                st.write("### Model Performance")
-                
-                for model, accuracy in results.items():
-                    st.metric(label=model, value=f"{accuracy:.2%}")
-                
-                # Plot results
-                st.bar_chart(pd.DataFrame.from_dict(results, orient='index', columns=['Accuracy']))
+                try:
+                    xtrain, xtest, ytrain, ytest = split_data(df)
+                    results, trained_models = train_and_evaluate_models(xtrain, xtest, ytrain, ytest)
+                    
+                    if results is not None:
+                        st.success("Model training completed!")
+                        st.write("### Model Performance")
+                        
+                        for model, accuracy in results.items():
+                            st.metric(label=model, value=f"{accuracy:.2%}")
+                        
+                        # Get the best model (actual object, not name)
+                        best_model_name = max(results, key=results.get)
+                        best_model = trained_models[best_model_name]  # Get the trained model object
+                        
+                        # Save the model and feature columns
+                        joblib.dump((best_model, xtrain.columns.tolist()), "trained_model.pkl")
+                        
+                        st.bar_chart(pd.DataFrame.from_dict(results, orient='index', columns=['Accuracy']))
+                    else:
+                        st.error("Model training failed or returned no results.")
+                except Exception as e:
+                    st.error(f"Error during model training: {str(e)}")
         else:
             st.error("No data available for training")
 
 elif options == "Predict":
     st.subheader("Make Predictions")
-    st.write("This feature will be implemented in the next version.")
-    st.info("Coming soon: Interactive form for making predictions on new loan applications")
-
+    trained_model = load_trained_model()
+    
+    if trained_model is None:
+         st.error("Please train a model first!")
+         
+    
+    new_data = get_user_input()
+    
+    if st.button("Predict"):
+        try:
+            # Get the feature columns the model expects
+            _, feature_columns = joblib.load("trained_model.pkl")
+            
+            # Ensure all columns exist (fill missing with 0)
+            for col in feature_columns:
+                if col not in new_data.columns:
+                    new_data[col] = 0
+            
+            # Reorder columns to match training data
+            new_data = new_data[feature_columns]
+            
+            # Make prediction
+            prediction = trained_model.predict(new_data)
+            result = "Approved" if prediction[0] == 1 else "Not Approved"
+            st.success(f"Loan Status: {result}")
+            
+        except Exception as e:
+            st.error(f"Prediction failed: {str(e)}")
+  
 # Footer
 st.sidebar.markdown("---")
 st.sidebar.markdown("Built with Streamlit")
