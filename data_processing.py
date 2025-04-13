@@ -47,19 +47,3 @@ def preprocess_data(df):
     df = pd.get_dummies(df, columns=['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'Property_Area'], dtype=int)
     
     return df
-<<<<<<< HEAD
-=======
-
-# Load trained model once and store it
-@st.cache_resource
-def load_trained_model():
-    try:
-        loaded = joblib.load("trained_model.pkl")
-        if isinstance(loaded, tuple):
-            model, feature_columns = loaded
-            return model
-        return loaded
-    except Exception as e:
-        st.error(f"Failed to load model: {e}")
-        return None
->>>>>>> 53a4e01 (Describe what you updated)
