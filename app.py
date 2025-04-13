@@ -23,7 +23,7 @@ options = st.sidebar.radio("Select Option:", ["Home", "Data Overview", "Model Tr
 @st.cache_data
 def load_and_preprocess():
     try:
-        df = load_data("data\credit.csv")
+        df = load_data("data/credit.csv")
         df = preprocess_data(df)
         return df
     except Exception as e:
