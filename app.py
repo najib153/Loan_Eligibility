@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from data_processing import load_data, preprocess_data, show_data
+from data_processing import load_data, preprocess_data, show_data, load_trained_model
 from modeling import split_data, train_and_evaluate_models, make_prediction, get_user_input
 
 
