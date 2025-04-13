@@ -85,18 +85,9 @@ elif options == "Model Training":
                     st.error(f"Error during model training: {str(e)}")
         else:
             st.error("No data available for training")
+            
 
 elif options == "Predict":
-    st.subheader("Make Predictions")
-    trained_model = load_trained_model()
-    
-    if trained_model is None:
-         st.error("Please train a model first!")
-         
-    
-    new_data = get_user_input()
-    
-    elif options == "Predict":
     st.subheader("Make Predictions")
     
     try:
@@ -121,6 +112,7 @@ elif options == "Predict":
 
             except Exception as e:
                 st.error(f"Prediction failed: {str(e)}")
+
 
   
 # Footer
