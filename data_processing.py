@@ -47,3 +47,10 @@ def preprocess_data(df):
     df = pd.get_dummies(df, columns=['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'Property_Area'], dtype=int)
     
     return df
+
+
+def load_trained_model(model_path="trained_model.pkl"):
+    """Load and return the trained model and features list."""
+    return joblib.load(model_path)
+    
+    
