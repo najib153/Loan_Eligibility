@@ -96,26 +96,32 @@ elif options == "Predict":
     
     new_data = get_user_input()
     
-    if st.button("Predict"):
-        try:
-            # Get the feature columns the model expects
-            _, feature_columns = joblib.load("trained_model.pkl")
-            
-            # Ensure all columns exist (fill missing with 0)
-            for col in feature_columns:
-                if col not in new_data.columns:
-                    new_data[col] = 0
-            
-            # Reorder columns to match training data
-            new_data = new_data[feature_columns]
-            
-            # Make prediction
-            prediction = trained_model.predict(new_data)
-            result = "Approved" if prediction[0] == 1 else "Not Approved"
-            st.success(f"Loan Status: {result}")
-            
-        except Exception as e:
-            st.error(f"Prediction failed: {str(e)}")
+    elif options == "Predict":
+    st.subheader("Make Predictions")
+    
+    try:
+        trained_model, feature_columns = load_trained_model()
+    except Exception:
+        st.error("Please train a model first!")
+        trained_model, feature_columns = None, None
+
+    if trained_model is not None:
+        new_data = get_user_input()
+
+        if st.button("Predict"):
+            try:
+                for col in feature_columns:
+                    if col not in new_data.columns:
+                        new_data[col] = 0
+                new_data = new_data[feature_columns]
+
+                prediction = trained_model.predict(new_data)
+                result = "Approved" if prediction[0] == 1 else "Not Approved"
+                st.success(f"Loan Status: {result}")
+
+            except Exception as e:
+                st.error(f"Prediction failed: {str(e)}")
+
   
 # Footer
 st.sidebar.markdown("---")
